@@ -1,5 +1,5 @@
 from django.shortcuts import render, HttpResponse
-from rest_framework.views import APIView
+from rest_framework.views import APIView, status
 from rest_framework.response import Response
 from .models import user
 from .serializers import ItemSerializer
@@ -10,7 +10,14 @@ from .serializers import ItemSerializer
 
 
 
+
+def attackareal(request):
+
+    return render(request, "attack_template.html")
+
+
 class UserView(APIView):
+
     def get(self, request):
         items = user.objects.all()
         serializer = ItemSerializer(items, many=True)
@@ -24,15 +31,29 @@ class UserView(APIView):
         return Response(serializer.errors, status=400)
   
 
+class RemoveUser(APIView):
 
-def deleteuser(request):
+    def get(self, request, id):
+        items = user.objects.get(id=id)
+        if items:
+            items.delete()
 
-    return HttpResponse("time to delet user")
+            return Response(status=status.HTTP_200_OK)
+        else:
+            return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-def adduser(request):
 
-    return HttpResponse("time to adduser ")
+
+class FetchUser(APIView):
+
+    def get(self, request, id):
+        userinfor = user.objects.get(id=id)
+
+        serializedata = ItemSerializer(userinfor)
+
+        return Response(serializedata.data, status= status.HTTP_200_OK)
+
 
 
 
